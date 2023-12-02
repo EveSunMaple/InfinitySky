@@ -81,7 +81,7 @@ public:
     BaseObject player;
     BaseObject leftGun;
     BaseObject rightGun;
-    ChildObject bullet;
+    BaseObject bullet;
     Camera mainCamera;
     WorldPage()
     {
@@ -95,7 +95,7 @@ public:
         player.SetControlFunction(Control);
         player.baseSprite = playerShip;
 
-        bullet = ChildObject(false, nullptr, bulletSprite, 0, 0, 0, 0, 0, 0);
+        bullet = BaseObject(false, nullptr, bulletSprite, 0, 0, 0, 0, 0, 0);
         leftGun = BaseObject(true, this, nullptr, &player, 0, 0, 0, 0, 34, 20);
         rightGun = BaseObject(true, this, nullptr, &player, 0, 0, 0, 0, -34, 20);
         leftGun.childObject = &bullet;

@@ -84,16 +84,16 @@ public:
         object.baseObject->setRotation(object.angle);
         for (float i = 0; i < object.childlist.size(); i++)
         {
-            object.childlist[i].x += object.childlist[i].speedX;
-            object.childlist[i].y += object.childlist[i].speedY;
-            object.childlist[i].winX = object.childlist[i].x - x;
-            object.childlist[i].winY = y - object.childlist[i].y;
-            // std::cout << "A CHILD (" << object.childlist[i].winX << ", " << object.childlist[i].winY << ")" << "\n";
-            if (object.childlist[i].baseObject != nullptr)
+            object.childlist[i]->x += object.childlist[i]->speedX;
+            object.childlist[i]->y += object.childlist[i]->speedY;
+            object.childlist[i]->winX = object.childlist[i]->x - x;
+            object.childlist[i]->winY = y - object.childlist[i]->y;
+            // std::cout << "A CHILD (" << object.childlist[i]->winX << ", " << object.childlist[i]->winY << ")" << "\n";
+            if (object.childlist[i]->baseObject != nullptr)
             {
-                object.childlist[i].baseObject->setPos(object.childlist[i].winX, object.childlist[i].winY);
-                object.childlist[i].baseObject->setAnchor(0.5f, 0.5f);
-                object.childlist[i].baseObject->setRotation(object.childlist[i].angle);
+                object.childlist[i]->baseObject->setPos(object.childlist[i]->winX, object.childlist[i]->winY);
+                object.childlist[i]->baseObject->setAnchor(0.5f, 0.5f);
+                object.childlist[i]->baseObject->setRotation(object.childlist[i]->angle);
             }
         }
     }

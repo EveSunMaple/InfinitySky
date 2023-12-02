@@ -6,130 +6,18 @@
 
 using namespace easy2d;
 
-class BaseObject;
-
-class ChildObject
+class easy2d::Sprite* copySprite(class easy2d::Sprite* aimSprite)
 {
-public:
-    // 构造函数，用于初始化对象的各种属性
-    ChildObject(bool init = false, class easy2d::Sprite* targetSprite = nullptr, class easy2d::Sprite* baseSprite = nullptr, // BaseObject* fatherObject = nullptr,
-        float x = 0.0f, float y = 0.0f, float collisionX = 100.0f, float collisionY = 100.0f, float fatherX = 0.0f, float fatherY = 0.0f,
-        class easy2d::Color color = Color::White)
-        : x(x), y(y), winX(0.0f), winY(0.0f), collisionX(collisionX), collisionY(collisionY), baseColor(color),
-        baseObject(gcnew ShapeNode), baseSprite(baseSprite), targetSprite(targetSprite), action(nullptr),
-        text(nullptr), // fatherObject(fatherObject), targetObject(nullptr),
-        speed(0.0f), speedAngle(0.0f), speedX(0.0f), speedY(0.0f), angle(0.0f),
-        health(100.0f), maxSpeed(10.0f), maxSpeedAngle(10.0f),
-        acceleration(5.5f), accelerationAngle(5.0f),
-        friction(1.5f), frictionAngle(2.5f), elastic(0.0f),
-        fatherX(fatherX), fatherY(fatherY),
-        tempTime(0.0f) {
-        if (init)
-            Init();
-    }
-    void Init()
+    class easy2d::Sprite* trueSprite = gcnew class easy2d::Sprite;
+    trueSprite->setProperty(aimSprite->getProperty());
+    trueSprite->setImage(aimSprite->getImage());
+    for (unsigned int i = 0; i < aimSprite->getAllChildren().size(); i++)
     {
-        baseObject->setWidth(collisionX);
-        baseObject->setHeight(collisionY);
-        baseObject->setAnchor(0.5f, 0.5f);
+        trueSprite->addChild(copySprite(dynamic_cast<class easy2d::Sprite*>(aimSprite->getAllChildren()[i])));
+    }
+    return trueSprite;
+}
 
-        DrawingStyle style;
-        style.mode = DrawingStyle::Mode::Solid;
-        style.fillColor = baseColor;
-
-        baseObject = ShapeNode::createRect(Size(collisionX, collisionY));
-        baseObject->setDrawingStyle(style);
-        if (baseSprite != nullptr)
-        {
-            baseSprite->setAnchor(0.5f, 0.5f);
-            baseObject->addChild(baseSprite);
-        }
-        if (targetSprite != nullptr)
-            targetSprite->addChild(baseObject);
-    }
-    // 拷贝函数
-    void DeepCopy(const ChildObject* other)
-    {
-        action = other->action;
-        baseSprite = other->baseSprite;
-        baseObject = other->baseObject;
-        targetSprite = other->targetSprite;
-        // fatherObject = other->fatherObject;
-        x = other->x;
-        y = other->y;
-        winX = other->winX;
-        winY = other->winY;
-        angle = other->angle;
-        speed = other->speed;
-        health = other->health;
-        collisionX = other->collisionX;
-        collisionY = other->collisionY;
-        speedX = other->speedX;
-        speedY = other->speedY;
-        maxSpeed = other->maxSpeed;
-        maxSpeedAngle = other->maxSpeedAngle;
-        acceleration = other->acceleration;
-        accelerationAngle = other->accelerationAngle;
-        friction = other->friction;
-        frictionAngle = other->frictionAngle;
-        elastic = other->elastic;
-        fatherX = other->fatherX;
-        fatherY = other->fatherY;
-        baseColor = other->baseColor;
-    }
-    // 应用函数
-    void Apply()
-    {
-        x += speedX;
-        y += speedY;
-        angle += speedAngle;
-        /*if (fatherObject != nullptr)
-        {
-            angle = fatherObject->angle;
-            float Angle = fatherObject->angle * acos(-1) / 180;
-            float changeX = 0, changeY = 0;
-            changeY += cos(Angle) * fatherY;
-            changeX += sin(Angle) * fatherY;
-            changeY -= sin(Angle) * fatherX;
-            changeX += cos(Angle) * fatherX;
-            x = fatherObject->x + changeX;
-            y = fatherObject->y + changeY;
-        }*/
-    }
-    //Base
-    class easy2d::Sprite* targetSprite; // 目标精灵
-    class easy2d::Spawn* action;        // 定义动画
-    class easy2d::Sprite* baseSprite;   // 定义精灵
-    class easy2d::ShapeNode* baseObject;// 定义节点
-    // 公共属性...
-    float x, y;                         // 默认坐标
-    float angle;                        // 当前角度
-    float speed;                        // 当前速度
-    float speedAngle;                   // 当前角速度
-    float winX, winY;                   // 默认窗口坐标
-    float health;                       // 默认生命值
-    float collisionX, collisionY;       // 默认碰撞箱
-    float speedX, speedY;               // 当前移动速度
-    float maxSpeed;                     // 默认最大速度
-    float maxSpeedAngle;                // 默认最大角速度
-    float acceleration;                 // 默认每帧加速度
-    float accelerationAngle;            // 默认每帧角速度
-    float friction;                     // 默认摩擦系数
-    float frictionAngle;                // 默认角度摩擦
-    float elastic;                      // 默认弹力转化率
-    class easy2d::Color baseColor;      // 默认节点颜色
-    // Text
-    class easy2d::Text* text;           // 定义文字节点
-    // Father
-    // BaseObject* fatherObject;           // 指向父亲的指针
-    float fatherX, fatherY;             // 定义相对坐标
-private:
-    float tempTime;
-    // 控制键的状态
-    bool upKey, downKey, leftKey, rightKey, rotateLeftKey, rotateRightKey;
-    // Target
-    // BaseObject* targetObject;           // 指向目标的指针
-};
 class BaseObject
 {
 public:
@@ -167,8 +55,9 @@ public:
         baseObject->setDrawingStyle(style);
         if (baseSprite != nullptr)
         {
-            baseSprite->setAnchor(0.5f, 0.5f);
-            baseObject->addChild(baseSprite);
+            auto trueBaseSprite = copySprite(baseSprite);
+            trueBaseSprite->setAnchor(0.5f, 0.5f);
+            baseObject->addChild(trueBaseSprite);
         }
         if (targetSprite != nullptr)
             targetSprite->addChild(baseObject);
@@ -318,7 +207,7 @@ public:
                 changeX += cos(Angle) * childX;
                 float newX = x + changeX;
                 float newY = y + changeY;
-                ChildObject child_ = childObject;
+                BaseObject child_ = childObject;
                 child_.DeepCopy(childObject);
                 auto bulletSprite = gcnew Sprite;
                 bulletSprite->open("PNG/Lasers/laserBlue01.png");
@@ -341,7 +230,7 @@ public:
 
                 child_.Init();
                 targetSprite->addChild(child_.baseObject);
-                childlist.push_back(child_);
+                childlist.push_back(new BaseObject(child_));
                 // std::cout << "PUSH\n";
                 Timer::add([=]()
                     {
@@ -433,14 +322,14 @@ public:
     class easy2d::Text* text;           // 定义文字节点
     // Child
     bool followFather;                  // 设置相对
-    std::deque<ChildObject> childlist;  // 定义儿子列表
-    ChildObject* childObject;            // 指向儿子的指针
+    std::deque<BaseObject*> childlist;  // 定义儿子列表
+    BaseObject* childObject;            // 指向儿子的指针
     float lifeTime;                     // 定义儿子存在时间
     float lntervalTime;                 // 定义儿子间歇时间
     float childSpeed;                   // 儿子发射速度
     float childAngle;                   // 儿子发射角度
     float childTrueAngle;               // 儿子发射角度 （真）
-    float childX, childY;             // 定义相对坐标
+    float childX, childY;               // 定义相对坐标
     // Father
     BaseObject* fatherObject;           // 指向父亲的指针
     float fatherX, fatherY;             // 定义相对坐标
