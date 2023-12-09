@@ -88,7 +88,6 @@ public:
             object.childlist[i]->y += object.childlist[i]->speedY;
             object.childlist[i]->winX = object.childlist[i]->x - x;
             object.childlist[i]->winY = y - object.childlist[i]->y;
-            // std::cout << "A CHILD (" << object.childlist[i]->winX << ", " << object.childlist[i]->winY << ")" << "\n";
             if (object.childlist[i]->baseObject != nullptr)
             {
                 object.childlist[i]->baseObject->setPos(object.childlist[i]->winX, object.childlist[i]->winY);

@@ -11,9 +11,9 @@ class easy2d::Sprite* copySprite(class easy2d::Sprite* aimSprite)
     class easy2d::Sprite* trueSprite = gcnew class easy2d::Sprite;
     trueSprite->setProperty(aimSprite->getProperty());
     trueSprite->setImage(aimSprite->getImage());
-    for (unsigned int i = 0; i < aimSprite->getAllChildren().size(); i++)
+    for (auto temp : aimSprite->getAllChildren())
     {
-        trueSprite->addChild(copySprite(dynamic_cast<class easy2d::Sprite*>(aimSprite->getAllChildren()[i])));
+        trueSprite->addChild(copySprite(dynamic_cast<class easy2d::Sprite*>(temp)));
     }
     return trueSprite;
 }
@@ -21,25 +21,76 @@ class easy2d::Sprite* copySprite(class easy2d::Sprite* aimSprite)
 class BaseObject
 {
 public:
-    using ControlFunction = std::function<std::tuple<bool, bool, bool, bool, bool, bool>(const BaseObject&)>;
-    using ChildrenFunction = std::function<bool(const BaseObject&)>;
+    using ControlFunction = std::function<void(BaseObject*)>;
+    using ChildrenFunction = std::function<void(BaseObject*)>;
 
     // 构造函数，用于初始化对象的各种属性
-    BaseObject(bool init = false, class easy2d::Sprite* targetSprite = nullptr, class easy2d::Sprite* baseSprite = nullptr, BaseObject* fatherObject = nullptr,
-        float x = 0.0f, float y = 0.0f, float collisionX = 100.0f, float collisionY = 100.0f, float fatherX = 0.0f, float fatherY = 0.0f,
+    BaseObject(int order = 0, bool init = false, class easy2d::Sprite* targetSprite = nullptr, class easy2d::Sprite* baseSprite = nullptr, BaseObject* fatherObject = nullptr,
+        class easy2d::Sequence* action = nullptr, bool followFather = false, float x = 0.0f, float y = 0.0f, float collisionX = 100.0f, float collisionY = 100.0f, float fatherX = 0.0f, float fatherY = 0.0f,
         class easy2d::Color color = Color::White)
-        : x(x), y(y), winX(0.0f), winY(0.0f), collisionX(collisionX), collisionY(collisionY), baseColor(color),
-        baseObject(gcnew ShapeNode), baseSprite(baseSprite), targetSprite(targetSprite), action(nullptr),
+        : order(order), x(x), y(y), winX(0.0f), winY(0.0f), collisionX(collisionX), collisionY(collisionY), baseColor(color),
+        baseObject(gcnew ShapeNode), baseSprite(baseSprite), targetSprite(targetSprite), action(action),
         text(nullptr), childObject(nullptr), fatherObject(fatherObject), targetObject(nullptr),
         speed(0.0f), speedAngle(0.0f), speedX(0.0f), speedY(0.0f), angle(0.0f),
-        health(100.0f), maxSpeed(10.0f), maxSpeedAngle(10.0f),
+        health(100.0f), maxSpeed(10.0f), maxSpeedAngle(5.0),
         acceleration(5.5f), accelerationAngle(5.0f),
-        friction(1.5f), frictionAngle(2.5f), elastic(0.0f),
-        lifeTime(1.0f), childSpeed(0.0f), childAngle(0.0f), childTrueAngle(0.0f), lntervalTime(0.1f), childX(0.0f), childY(0.0f),
-        fatherX(fatherX), fatherY(fatherY), followFather(false),
-        tempTime(0.0f) {
+        friction(1.5f), frictionAngle(1.5f), elastic(0.0f), tempTime(0.0f),
+        lifeTime(10.0f), childSpeed(0.0f), childAngle(0.0f), childTrueAngle(0.0f), lntervalTime(0.1f), childX(0.0f), childY(0.0f),
+        fatherX(fatherX), fatherY(fatherY), followFather(followFather)
+        {
         if (init)
             Init();
+    }
+    BaseObject(const BaseObject* other)
+        : order(other->order),
+        targetSprite(other->targetSprite),
+        action(other->action),
+        baseSprite(other->baseSprite),
+        baseObject(other->baseObject),
+        x(other->x),
+        y(other->y),
+        angle(other->angle),
+        speed(other->speed),
+        speedAngle(other->speedAngle),
+        winX(other->winX),
+        winY(other->winY),
+        health(other->health),
+        collisionX(other->collisionX),
+        collisionY(other->collisionY),
+        speedX(other->speedX),
+        speedY(other->speedY),
+        maxSpeed(other->maxSpeed),
+        maxSpeedAngle(other->maxSpeedAngle),
+        acceleration(other->acceleration),
+        accelerationAngle(other->accelerationAngle),
+        friction(other->friction),
+        frictionAngle(other->frictionAngle),
+        elastic(other->elastic),
+        baseColor(other->baseColor),
+        text(other->text),
+        followFather(other->followFather),
+        childlist(other->childlist),
+        childObject(other->childObject),
+        lifeTime(other->lifeTime),
+        lntervalTime(other->lntervalTime),
+        childSpeed(other->childSpeed),
+        childAngle(other->childAngle),
+        childTrueAngle(other->childTrueAngle),
+        childX(other->childX),
+        childY(other->childY),
+        fatherObject(other->fatherObject),
+        fatherX(other->fatherX),
+        fatherY(other->fatherY),
+        targetObject(other->targetObject),
+        controlFunction_(other->controlFunction_),
+        childrenFunction_(other->childrenFunction_),
+        tempTime(other->tempTime),
+        upKey(other->upKey),
+        downKey(other->downKey),
+        leftKey(other->leftKey),
+        rightKey(other->rightKey),
+        rotateLeftKey(other->rotateLeftKey),
+        rotateRightKey(other->rotateRightKey) {
     }
     void Init()
     {
@@ -58,6 +109,12 @@ public:
             auto trueBaseSprite = copySprite(baseSprite);
             trueBaseSprite->setAnchor(0.5f, 0.5f);
             baseObject->addChild(trueBaseSprite);
+            trueBaseSprite->setOrder(order);
+            baseObject->setOrder(order);
+            if (action != nullptr)
+            {
+                trueBaseSprite->runAction(action->clone());
+            }
         }
         if (targetSprite != nullptr)
             targetSprite->addChild(baseObject);
@@ -72,24 +129,23 @@ public:
     {
         childrenFunction_ = childrenFunction;
     }
-    // 获取并应用控制函数的返回值
+    // 应用控制函数
     void ApplyControlFunction()
     {
         if (controlFunction_)
         {
-            auto controlValues = controlFunction_(*this);
-            ApplyControlValues(controlValues);
+            controlFunction_(this);
         }
     }
-    // 获取并应用儿子函数的返回值
+    // 应用儿子函数
     void ApplyChildrenFunction()
     {
         if (childrenFunction_)
         {
-            auto childrenValues = childrenFunction_(*this);
-            ApplyChildrenValues(childrenValues);
+            childrenFunction_(this);
         }
     }
+    /*
     // 应用控制值 上下左右
     void ApplyControlValues(const std::tuple<bool, bool, bool, bool, bool, bool>& controlValues)
     {
@@ -174,7 +230,8 @@ public:
             if (speedAngle < 0) speedAngle = -maxSpeedAngle;
             if (speedAngle > 0) speedAngle = maxSpeedAngle;
         }
-    }
+    }*/
+    /*
     // 应用儿子
     void ApplyChildrenValues(bool& childrenValues)
     {
@@ -207,19 +264,9 @@ public:
                 changeX += cos(Angle) * childX;
                 float newX = x + changeX;
                 float newY = y + changeY;
-                BaseObject child_ = childObject;
-                child_.DeepCopy(childObject);
-                auto bulletSprite = gcnew Sprite;
-                bulletSprite->open("PNG/Lasers/laserBlue01.png");
-                child_.baseSprite = bulletSprite;
-                DrawingStyle style;
-                style.mode = DrawingStyle::Mode::Solid;
-                style.fillColor = baseColor;
-                child_.baseObject = ShapeNode::createCircle(1, style);
-                child_.baseObject->setAnchor(0.5f, 0.5f);
-                child_.baseSprite->setAnchor(0.5f, 0.5f);
-                child_.baseSprite->setPos(0.0f, 0.0f);
-
+                BaseObject child_ = BaseObject(childObject);
+                // child_.baseSprite = childObject->baseSprite;
+                // child_.DeepCopy(childObject);
                 child_.angle = childTrueAngle;
                 child_.x = newX;
                 child_.y = newY;
@@ -240,43 +287,7 @@ public:
                     }, lifeTime, 1);
             }
         }
-    }
-    // 拷贝函数
-    void DeepCopy(const BaseObject* other)
-    {
-        action = other->action;
-        baseSprite = other->baseSprite;
-        baseObject = other->baseObject;
-        targetSprite = other->targetSprite;
-        fatherObject = other->fatherObject;
-        controlFunction_ = other->controlFunction_;
-        childrenFunction_ = other->childrenFunction_;
-        x = other->x;
-        y = other->y;
-        winX = other->winX;
-        winY = other->winY;
-        angle = other->angle;
-        speed = other->speed;
-        health = other->health;
-        collisionX = other->collisionX;
-        collisionY = other->collisionY;
-        speedX = other->speedX;
-        speedY = other->speedY;
-        maxSpeed = other->maxSpeed;
-        maxSpeedAngle = other->maxSpeedAngle;
-        acceleration = other->acceleration;
-        accelerationAngle = other->accelerationAngle;
-        friction = other->friction;
-        frictionAngle = other->frictionAngle;
-        elastic = other->elastic;
-        lifeTime = other->lifeTime;
-        childSpeed = other->childSpeed;
-        childAngle = other->childAngle;
-        childTrueAngle = other->childTrueAngle;
-        fatherX = other->fatherX;
-        fatherY = other->fatherY;
-        baseColor = other->baseColor;
-    }
+    }*/
     // 应用函数
     void Apply()
     {
@@ -297,8 +308,9 @@ public:
         }
     }
     //Base
+    int order;
     class easy2d::Sprite* targetSprite; // 目标精灵
-    class easy2d::Spawn* action;        // 定义动画
+    class easy2d::Sequence* action;     // 定义动画
     class easy2d::Sprite* baseSprite;   // 定义精灵
     class easy2d::ShapeNode* baseObject;// 定义节点
     // 公共属性...
@@ -325,6 +337,7 @@ public:
     std::deque<BaseObject*> childlist;  // 定义儿子列表
     BaseObject* childObject;            // 指向儿子的指针
     float lifeTime;                     // 定义儿子存在时间
+    float tempTime;                     // 当前儿子操作阈值
     float lntervalTime;                 // 定义儿子间歇时间
     float childSpeed;                   // 儿子发射速度
     float childAngle;                   // 儿子发射角度
@@ -339,7 +352,6 @@ private:
     // 控制函数
     ControlFunction controlFunction_;   // 操作函数
     ChildrenFunction childrenFunction_; // 儿子操作函数
-    float tempTime;
     // 控制键的状态
     bool upKey, downKey, leftKey, rightKey, rotateLeftKey, rotateRightKey;
 };

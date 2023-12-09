@@ -3,6 +3,8 @@
 #include <tuple>
 #include "SceneControl.h"
 #include "CameraModule.h"
+#include "Environment.h"
+#include "Function.h"
 #define width 1280
 #define height 960
 
@@ -17,35 +19,6 @@ bool Fire(const BaseObject& obj)
 {
     if (Input::isDown(MouseCode::Left)) return true;
     return false;
-}
-tuple<bool, bool, bool, bool, bool, bool> Control(const BaseObject& obj)
-{
-    tuple<bool, bool, bool, bool, bool, bool> controlValue;
-    if (Input::isDown(KeyCode::W))
-    {
-        get<0>(controlValue) = true;
-    }
-    if (Input::isDown(KeyCode::S))
-    {
-        get<1>(controlValue) = true;
-    }
-    if (Input::isDown(KeyCode::A))
-    {
-        get<2>(controlValue) = true;
-    }
-    if (Input::isDown(KeyCode::D))
-    {
-        get<3>(controlValue) = true;
-    }
-    if (Input::isDown(KeyCode::Q))
-    {
-        get<4>(controlValue) = true;
-    }
-    if (Input::isDown(KeyCode::E))
-    {
-        get<5>(controlValue) = true;
-    }
-    return controlValue;
 }
 
 class BackGround : public Sprite
@@ -74,38 +47,67 @@ public:
         cout << Ground_height << endl;
     }
 };
+
 class WorldPage : public Sprite
 {
 public:
     BaseObject backGround;
     BaseObject player;
+
+    BaseObject bullet;
     BaseObject leftGun;
     BaseObject rightGun;
-    BaseObject bullet;
+
+    BaseObject particle[3];
+    BaseObject particleGun[6];
     Camera mainCamera;
     WorldPage()
     {
         auto ground = gcnew BackGround;
-        auto playerShip = gcnew Sprite;
-        auto bulletSprite = gcnew Sprite;
-        playerShip->open("PNG/playerShip1_blue.png");
-        bulletSprite->open("PNG/Lasers/laserBlue01.png");
-        backGround = BaseObject(true, this, ground, nullptr, 0, 0, width * 4, height * 4);
-        player = BaseObject(true, this, playerShip, nullptr, 0, 0, 0, 0, 0, 0, Color::ForestGreen);
-        player.SetControlFunction(Control);
-        player.baseSprite = playerShip;
+        backGround = BaseObject(0, true, this, ground, nullptr, nullptr, false, 0, 0, width * 4, height * 4);
+        player = BaseObject(1, true, this, playerShip1_blue, nullptr, nullptr, false, 0, 0, 0, 0, 0, 0, Color::ForestGreen);
+        player.SetControlFunction(BaseKeyControl);
 
-        bullet = BaseObject(false, nullptr, bulletSprite, 0, 0, 0, 0, 0, 0);
-        leftGun = BaseObject(true, this, nullptr, &player, 0, 0, 0, 0, 34, 20);
-        rightGun = BaseObject(true, this, nullptr, &player, 0, 0, 0, 0, -34, 20);
+        bullet = BaseObject(0, false, nullptr, laserBlue01, nullptr, nullptr, false, 0, 0, 0, 0, 0, 0);
+        leftGun = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, 34, 20);
+        rightGun = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, -34, 20);
+        leftGun.SetChildrenFunction(BaseFireControl);
+        rightGun.SetChildrenFunction(BaseFireControl);
         leftGun.childObject = &bullet;
         rightGun.childObject = &bullet;
         leftGun.childSpeed = 10;
         rightGun.childSpeed = 10;
-        leftGun.followFather = true;
-        rightGun.followFather = true;
-        leftGun.SetChildrenFunction(Fire);
-        rightGun.SetChildrenFunction(Fire);
+
+        particle[0] = BaseObject(0, false, nullptr, particle1_white, nullptr, action_particle1, false, 0, 0, 0, 0, 0, 0);
+        particle[1] = BaseObject(0, false, nullptr, particle1_blue, nullptr, action_particle2, false, 0, 0, 0, 0, 0, 0);
+        particle[2] = BaseObject(0, false, nullptr, particle1_yellow, nullptr, action_particle3, false, 0, 0, 0, 0, 0, 0);
+        particleGun[0] = BaseObject(0, true, this, nullptr, &player, nullptr, false, 0, 0, 0, 0, -44, -20);
+        particleGun[1] = BaseObject(0, true, this, nullptr, &player, nullptr, false, 0, 0, 0, 0, 44, -20);
+        particleGun[2] = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, -25, -15);
+        particleGun[3] = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, 25, -15);
+        particleGun[4] = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, -25, -15);
+        particleGun[5] = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, 25, -15);
+        particleGun[0].childObject = &particle[0];
+        particleGun[1].childObject = &particle[0];
+        particleGun[2].childObject = &particle[1];
+        particleGun[3].childObject = &particle[1];
+        particleGun[4].childObject = &particle[2];
+        particleGun[5].childObject = &particle[2];
+        particleGun[2].childSpeed = 1.5f;
+        particleGun[3].childSpeed = 1.5f;
+        particleGun[4].childSpeed = 1.5f;
+        particleGun[5].childSpeed = 1.5f;
+        particleGun[2].childAngle = 180;
+        particleGun[3].childAngle = 180;
+        particleGun[4].childAngle = 180;
+        particleGun[5].childAngle = 180;
+        for (unsigned int i = 0; i <= 5; i++)
+        {
+            particleGun[i].SetChildrenFunction(BaseParticle);
+            particleGun[i].lntervalTime = 0.0f;
+            particleGun[i].lifeTime = 0.8f;
+        }
+
         mainCamera = Camera(&player);
     }
     void onUpdate()
@@ -114,11 +116,23 @@ public:
         leftGun.ApplyChildrenFunction();
         rightGun.ApplyChildrenFunction();
         mainCamera.FollowTarget();
-        mainCamera.ProjectObject(player);
         mainCamera.ProjectObject(backGround);
         mainCamera.ProjectObject(leftGun);
         mainCamera.ProjectObject(rightGun);
-        // cout << leftGun.childlist.size() << '\n';
+        mainCamera.ProjectObject(player);
+        for (unsigned int i = 0; i <= 5; i++)
+        {
+            mainCamera.ProjectObject(particleGun[i]);
+        }
+        particleGun[0].ApplyChildrenFunction();
+        particleGun[1].ApplyChildrenFunction();
+        if (Input::isDown(KeyCode::W))
+        {
+            particleGun[2].ApplyChildrenFunction();
+            particleGun[3].ApplyChildrenFunction();
+            particleGun[4].ApplyChildrenFunction();
+            particleGun[5].ApplyChildrenFunction();
+        }
         if (mainCamera.x <= backGround.x) backGround.x = (int)backGround.x - Ground_width;
         if (mainCamera.y >= backGround.y) backGround.y = (int)backGround.y + Ground_height;
         if (mainCamera.x >= backGround.x + Ground_width) backGround.x = (int)backGround.x + Ground_width;
@@ -130,19 +144,14 @@ int main()
 {
     if (Game::init("InfinitySky: 无尽之空", 960, 640))
     {
-        // Renderer::showFps(true);			//显示FPS
+        GameInit();
+        Renderer::showFps(true);			//显示FPS
 
-        // auto sprite = gcnew Sprite;
-        // sprite->open("PNG/Lasers/laserBlue11.png"); // 从本地图片加载
-        // sprite->setAnchor(0.5f, 0.5f);
-        // Window::setCustomCursor(sprite);
+        Window::setCustomCursor(aim);
 
         auto world = new Scene;             //新建场景
-
         SceneManager::enter(world);         //进入场景
-
         auto worldPage = gcnew WorldPage;   //加载世界
-
         world->addChild(worldPage);         //把世界添加进场景
 
         Game::start();
