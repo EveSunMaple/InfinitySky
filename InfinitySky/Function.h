@@ -288,6 +288,7 @@ void BaseFireControl(BaseObject* obj)
                 {
                     // std::cout << "REMOVE CHILD\n";
                     obj->targetSprite->removeChild(child_.baseObject);
+                    delete obj->childlist.front();
                     obj->childlist.pop_front();
                 }, obj->lifeTime, 1);
         }
@@ -338,6 +339,7 @@ void BaseParticle(BaseObject* obj)
             {
                 // std::cout << "REMOVE CHILD\n";
                 obj->targetSprite->removeChild(child_.baseObject);
+                delete obj->childlist.front();
                 obj->childlist.pop_front();
             }, obj->lifeTime, 1);
     }

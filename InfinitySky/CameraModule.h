@@ -96,6 +96,23 @@ public:
             }
         }
     }
+    void ProjectCollision(BaseObject& object)
+    {
+        ShapeMaker collisionMaker;
+        collisionMaker.beginPath(object.collisionPoints[0]);
+        for (size_t i = 1; i < object.collisionPoints.size(); ++i)
+            collisionMaker.addLine(object.collisionPoints[i]);
+        collisionMaker.endPath(true);
+        auto collisionShape = collisionMaker.getShape();
+        auto shapeNode = gcnew ShapeNode(collisionShape);
+        shapeNode->setOrder(100); 
+        DrawingStyle style;
+        style.mode = DrawingStyle::Mode::Round;
+        style.strokeColor = Color::GreenYellow;         
+        style.strokeWidth = 2.0; 
+        shapeNode->setDrawingStyle(style);
+        object.baseObject->addChild(shapeNode);
+    }
     void Coordinates();
 
     BaseObject* targetObject;  // 指向目标对象的指针

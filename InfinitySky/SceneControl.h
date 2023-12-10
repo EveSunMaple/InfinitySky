@@ -36,7 +36,8 @@ public:
         acceleration(5.5f), accelerationAngle(5.0f),
         friction(1.5f), frictionAngle(1.5f), elastic(0.0f), tempTime(0.0f),
         lifeTime(10.0f), childSpeed(0.0f), childAngle(0.0f), childTrueAngle(0.0f), lntervalTime(0.1f), childX(0.0f), childY(0.0f),
-        fatherX(fatherX), fatherY(fatherY), followFather(followFather)
+        fatherX(fatherX), fatherY(fatherY), followFather(followFather),
+        openCollision(false), collisionRotation(0.0f)
         {
         if (init)
             Init();
@@ -90,7 +91,10 @@ public:
         leftKey(other->leftKey),
         rightKey(other->rightKey),
         rotateLeftKey(other->rotateLeftKey),
-        rotateRightKey(other->rotateRightKey) {
+        rotateRightKey(other->rotateRightKey),
+        openCollision(other->openCollision),
+        collisionRotation(other->collisionRotation),
+        collisionPoints(other->collisionPoints) {
     }
     void Init()
     {
@@ -306,6 +310,21 @@ public:
             x = fatherObject->x + changeX;
             y = fatherObject->y + changeY;
         }
+        if (openCollision)
+        {
+            for (const Point& point : collisionPoints)
+            {
+                // 将每个点绕碰撞箱中心旋转
+                float rotatedX = cos(collisionRotation) * point.x - sin(collisionRotation) * point.y;
+                float rotatedY = sin(collisionRotation) * point.x + cos(collisionRotation) * point.y;
+
+                // 计算旋转后的点的全局坐标
+                float globalX = x + rotatedX;
+                float globalY = y + rotatedY;
+
+                collisionPoints.emplace_back(globalX, globalY);
+            }
+        }
     }
     //Base
     int order;
@@ -346,8 +365,12 @@ public:
     // Father
     BaseObject* fatherObject;           // 指向父亲的指针
     float fatherX, fatherY;             // 定义相对坐标
-    //Target
+    // Target
     BaseObject* targetObject;           // 指向目标的指针
+    // Collision
+    bool openCollision;                 // 开启碰撞箱
+    std::vector<Point> collisionPoints; // 碰撞箱点集
+    float collisionRotation;            // 碰撞箱旋转
 private:
     // 控制函数
     ControlFunction controlFunction_;   // 操作函数

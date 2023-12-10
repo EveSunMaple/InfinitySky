@@ -131,6 +131,7 @@
     <ClInclude Include="CameraModule.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="SceneControl.h" />
   </ItemGroup>
   <ItemGroup>
