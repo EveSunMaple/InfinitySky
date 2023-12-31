@@ -15,16 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CameraModule.h">
+    <ClInclude Include="CameraModule.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SceneControl.h">
+    <ClInclude Include="SceneControl.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Environment.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Function.h">
+    <ClInclude Include="Function.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
@@ -32,12 +32,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CameraModule.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneControl.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

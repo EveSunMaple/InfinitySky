@@ -1,10 +1,10 @@
 #include <easy2d/easy2d.h>
 #include <iostream>
 #include <tuple>
-#include "SceneControl.h"
-#include "CameraModule.h"
+#include "SceneControl.hpp"
+#include "CameraModule.hpp"
 #include "Environment.h"
-#include "Function.h"
+#include "Function.hpp"
 #define width 1280
 #define height 960
 

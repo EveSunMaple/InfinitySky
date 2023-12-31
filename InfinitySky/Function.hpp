@@ -1,6 +1,6 @@
 #pragma once
 #include <easy2d/easy2d.h>
-#include "SceneControl.h"
+#include "SceneControl.hpp"
 using namespace easy2d;
 
 void BaseKeyControl(BaseObject* obj)
@@ -338,7 +338,7 @@ void BaseParticle(BaseObject* obj)
         Timer::add([=]()
             {
                 // std::cout << "REMOVE CHILD\n";
-                obj->targetSprite->removeChild(child_.baseObject);
+                obj->targetSprite->removeChild(child_.baseObject);\
                 delete obj->childlist.front();
                 obj->childlist.pop_front();
             }, obj->lifeTime, 1);

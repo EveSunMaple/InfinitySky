@@ -1,5 +1,5 @@
 #pragma once
-#include "SceneControl.h"
+#include "SceneControl.hpp"
 #include <string.h>
 #include <easy2d/easy2d.h>
 using namespace easy2d;
