@@ -129,13 +129,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CameraModule.hpp" />
-    <ClInclude Include="Environment.h" />
+    <ClInclude Include="Environment.hpp" />
     <ClInclude Include="Function.hpp" />
-    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="json\json-forwards.h" />
+    <ClInclude Include="json\json.h" />
     <ClInclude Include="SceneControl.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data.json" />
+    <None Include="Ships.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

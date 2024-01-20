@@ -1,9 +1,13 @@
 #include <easy2d/easy2d.h>
+#include <stdio.h>
+#include <windows.h>
 #include <iostream>
+#include <thread>
+#include <mutex>
 #include <tuple>
 #include "SceneControl.hpp"
 #include "CameraModule.hpp"
-#include "Environment.h"
+#include "Environment.hpp"
 #include "Function.hpp"
 #define width 1280
 #define height 960
@@ -43,8 +47,6 @@ public:
         }
         Ground_width = Back_length * (i / 4);
         Ground_height = Back_length * (j / i / 4);
-        cout << Ground_width << endl;
-        cout << Ground_height << endl;
     }
 };
 
@@ -65,18 +67,23 @@ public:
     {
         auto ground = gcnew BackGround;
         backGround = BaseObject(0, true, this, ground, nullptr, nullptr, false, 0, 0, width * 4, height * 4);
-        player = BaseObject(1, true, this, playerShip1_blue, nullptr, nullptr, false, 0, 0, 0, 0, 0, 0, Color::ForestGreen);
+        player = BaseObject(1, true, this, spriteMap["playerShip1_blue"], nullptr, nullptr, false, 0, 0, 0, 0, 0, 0, Color::ForestGreen);
         player.SetControlFunction(BaseKeyControl);
-        Point p1 = Point(45, -7); player.collisionPoints.push_back(p1);
-        p1 = Point(44, 20); player.collisionPoints.push_back(p1);
+        Point p1 = Point(0, 0);
+        p1 = Point(10, -13); player.collisionPoints.push_back(p1);
+        p1 = Point(36, 2); player.collisionPoints.push_back(p1);
+        p1 = Point(45, -3); player.collisionPoints.push_back(p1);
+        p1 = Point(43, 20); player.collisionPoints.push_back(p1);
         p1 = Point(6, 27); player.collisionPoints.push_back(p1);
         p1 = Point(-6, 27); player.collisionPoints.push_back(p1);
-        p1 = Point(-44, 20); player.collisionPoints.push_back(p1);
-        p1 = Point(-45, -7); player.collisionPoints.push_back(p1);
-        p1 = Point(-5, -37); player.collisionPoints.push_back(p1);
-        p1 = Point(5, -37); player.collisionPoints.push_back(p1);
+        p1 = Point(-43, 20); player.collisionPoints.push_back(p1);
+        p1 = Point(-45, -3); player.collisionPoints.push_back(p1);
+        p1 = Point(-36, 2); player.collisionPoints.push_back(p1);
+        p1 = Point(-10, -13); player.collisionPoints.push_back(p1);
+        p1 = Point(-6, -37); player.collisionPoints.push_back(p1);
+        p1 = Point(6, -37); player.collisionPoints.push_back(p1);
 
-        bullet = BaseObject(0, false, nullptr, laserBlue01, nullptr, nullptr, false, 0, 0, 0, 0, 0, 0);
+        bullet = BaseObject(0, false, nullptr, spriteMap["laserBlue01"], nullptr, nullptr, false, 0, 0, 0, 0, 0, 0);
         leftGun = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, 34, 20);
         rightGun = BaseObject(0, true, this, nullptr, &player, nullptr, true, 0, 0, 0, 0, -34, 20);
         leftGun.SetChildrenFunction(BaseFireControl);
@@ -137,6 +144,7 @@ public:
         particleGun[1].ApplyChildrenFunction();
         if (Input::isDown(KeyCode::W))
         {
+            GameInit();
             particleGun[2].ApplyChildrenFunction();
             particleGun[3].ApplyChildrenFunction();
             particleGun[4].ApplyChildrenFunction();
@@ -151,19 +159,31 @@ public:
 
 int main()
 {
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO CursorInfo;
+    GetConsoleCursorInfo(handle, &CursorInfo);//获取控制台光标信息
+    CursorInfo.bVisible = false; //隐藏控制台光标
+    SetConsoleCursorInfo(handle, &CursorInfo);//设置控制台光标状态
+
+
     if (Game::init("InfinitySky: 无尽之空", 960, 640))
     {
-        GameInit();
-        Renderer::showFps(true);			//显示FPS
+        loadScene = gcnew Scene;
+        auto loadPage = gcnew LoadPage;   
+        loadScene->addChild(loadPage);
+        SceneManager::enter(loadScene);
 
-        Window::setCustomCursor(aim);
-
-        auto world = new Scene;             //新建场景
-        SceneManager::enter(world);         //进入场景
-        auto worldPage = gcnew WorldPage;   //加载世界
-        world->addChild(worldPage);         //把世界添加进场景
-
+        // auto world = gcnew Scene;
+        // auto worldPage = gcnew WorldPage;  
+        // world->addChild(worldPage);        
+        // SceneManager::enter(world);         
+        // loadThread.join();
+        // time(&timedelay);
         Game::start();
+
+        // Renderer::showFps(true);			//显示FPS
+
+        // Window::setCustomCursor(aim);
     }
     Game::destroy();
     return 0;
