@@ -149,7 +149,7 @@ void coutProgressBar(int total, int now)
     int i = 0; 
     nowLoadLink = now;
     float loadBarValue = (float)now / (float)total * 100.0;
-    std::cout << "\r 进度：[";
+    std::cout << "\r\033[1;32m INFO \033[0m进度：[";
     for (i = 1; i < loadBarValue; i += 10) std::cout << GREEN_TEXT << "-" << RESET_TEXT;
     for (int j = 100; j > i; j -= 10) std::cout << RED_TEXT << "-" << RESET_TEXT;
     std::cout << "] " << (int)loadBarValue << "%";
@@ -175,7 +175,6 @@ void traverseDirectory(const std::string& directoryPath)
 {
     for (const auto& entry : fs::directory_iterator(directoryPath))
     {
-        Sleep(1);
         if (entry.is_directory())
         {
             traverseDirectory(entry.path().string());
@@ -233,7 +232,6 @@ void GameInit()
     totalLoadNumber = readData["resourcePath"].size();
     for (const auto& resource : readData["resourcePath"])
     {
-        Sleep(1);
         nowLoadNumber++;
         if (returnValue) break;
         if (fs::exists(resource.asCString()))
