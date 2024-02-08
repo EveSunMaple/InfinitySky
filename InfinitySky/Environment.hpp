@@ -128,10 +128,12 @@ std::string replaceBackslash(const std::string& input)
 void GameInit();
 int nowLoadNumber;
 int totalLoadNumber;
+int initLoadNumber = 0;
 Json::Value newData;
 Json::Value readData;
 easy2d::ShapeNode* locateBar;
 easy2d::ShapeNode* loadbar;
+easy2d::Sprite* startUp;
 easy2d::Text* tip;
 easy2d::Text* rate;
 
@@ -148,9 +150,10 @@ void coutProgressBar(int total, int now)
 {
     int i = 0; 
     nowLoadLink = now;
-    float loadBarValue = (float)now / (float)total * 100.0;
+    float loadBarValue = (float)now / (float)total * 100.0f;
+    if (loadBarValue > 100.0f) loadBarValue = 100.0f;
     std::cout << "\r\033[1;32m INFO \033[0m进度：[";
-    for (i = 1; i < loadBarValue; i += 10) std::cout << GREEN_TEXT << "-" << RESET_TEXT;
+    for (i = 1; i < loadBarValue - 5; i += 10) std::cout << GREEN_TEXT << "-" << RESET_TEXT;
     for (int j = 100; j > i; j -= 10) std::cout << RED_TEXT << "-" << RESET_TEXT;
     std::cout << "] " << (int)loadBarValue << "%";
 }
@@ -165,10 +168,20 @@ void initDirectory(const std::string& directoryPath)
         }
         else
         {
-            LOCK
+            initLoadNumber++;
             newData["resourcePath"].append(replaceBackslash(entry.path().string()));
         }
     }
+}
+
+void reLoad()
+{
+    WARN "正在使用重加载模块！错误可能被隐蔽" END;
+    initDirectory("./Source/PNG");
+    newData["totalNumber"] = initLoadNumber;
+    std::ofstream outputFile("Data.json");
+    outputFile << newData;
+    outputFile.close();
 }
 
 void traverseDirectory(const std::string& directoryPath)
@@ -187,10 +200,11 @@ void traverseDirectory(const std::string& directoryPath)
                 nowLoadNumber++;
                 spriteName = entry.path().stem().string();
                 spritePath = replaceBackslash(entry.path().string());
+                // spriteMap[spriteName] = gcnew easy2d::Sprite(spritePath);;
             }
             if (entry.path().extension() == ".wav")
             {
-                nowLoadNumber++;
+                // nowLoadNumber++;
             }
             coutProgressBar(totalLoadNumber, nowLoadNumber);
         }
@@ -263,6 +277,8 @@ void GameInit()
     traverseDirectory("./Source");
     ENDL
     INFO "资源文件载入完毕✅" END;
+
+    checkOver(2);
 }
 
 class LoadPage : public Sprite
@@ -274,9 +290,15 @@ public:
     LoadPage()
     {
         // 初始化
+        reLoad(); // 重加载!
         StyleInit();
         readData = readJsonFromFile("Data.json");
         loadThread = std::thread(GameInit);
+        startUp = gcnew easy2d::Sprite("./Source/PNG/Maps/icon.png");
+        startUp->setAnchor(0.5f, 0.5f);
+        startUp->setOpacity(0.0f);
+        startUp->setPos(480, 320);
+        this->addChild(startUp);
         locateBar = gcnew easy2d::ShapeNode(easy2d::Shape::createRoundedRect(Rect(Point(), Size(800, 40)), Vector2(10, 10)));
         locateBar->setDrawingStyle(hollowBarStyle);
         locateBar->setAnchor(0.5f, 0.5f);
@@ -317,5 +339,17 @@ public:
                 spritePathIner = spritePath;
             }
         }
+        if (check == 2)
+        {
+            easy2d::OpacityTo* opacityTo = gcnew OpacityTo(1.0f, 1.0f);
+            easy2d::OpacityTo* _opacityTo = gcnew OpacityTo(0.5f, 0.0f);
+            locateBar->runAction(_opacityTo->clone());
+            loadbar->runAction(_opacityTo->clone());
+            rate->runAction(_opacityTo->clone());
+            tip->runAction(_opacityTo->clone());
+            tip->setText("已完成！");
+            startUp->runAction(opacityTo);
+        }
+
     }
 };
