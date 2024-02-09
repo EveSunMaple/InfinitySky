@@ -8,6 +8,7 @@
 #include "SceneControl.hpp"
 #include "CameraModule.hpp"
 #include "Environment.hpp"
+#include "SourceLoad.hpp"
 #include "Function.hpp"
 #define width 1280
 #define height 960
@@ -49,7 +50,7 @@ public:
         Ground_height = Back_length * (j / i / 4);
     }
 };
-
+/*
 class WorldPage : public Sprite
 {
 public:
@@ -155,7 +156,7 @@ public:
         if (mainCamera.x >= backGround.x + Ground_width) backGround.x = (int)backGround.x + Ground_width;
         if (mainCamera.y <= backGround.y - Ground_height) backGround.y = (int)backGround.y - Ground_height;
     }
-};
+};*/
 
 int main()
 {
@@ -164,7 +165,6 @@ int main()
     GetConsoleCursorInfo(handle, &CursorInfo);//获取控制台光标信息
     CursorInfo.bVisible = false; //隐藏控制台光标
     SetConsoleCursorInfo(handle, &CursorInfo);//设置控制台光标状态
-
 
     if (Game::init("InfinitySky: 无尽之空", 960, 640))
     {

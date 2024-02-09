@@ -3,14 +3,14 @@
     "playerShip1_blue": {
       "sprite": {
         "name": "playerShip1_blue",
+        "mass": 100,
         "health": 100,
         "maxSpeed": 10,
         "maxSpeedAngle": 5,
         "acceleration": 5.5,
         "accelerationAngle": 5,
         "friction": 1.5,
-        "frictionAngle": 1.5,
-
+        "frictionAngle": 1.5
       },
       "weapons": [
         {

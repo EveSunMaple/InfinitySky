@@ -1,8 +1,7 @@
 #pragma once
-#include "SceneControl.hpp"
-#include <string.h>
+#include <string>
 #include <easy2d/easy2d.h>
-using namespace easy2d;
+#include "SceneControl.hpp"
 
 // 摄像机类
 class Camera
@@ -20,14 +19,14 @@ public:
     {
         // 其他初始化逻辑
     }
-
-    void CtrlCameraMove(char up, char right, char down, char left);
+    ~Camera()
+    {
+        if (targetObject != nullptr) delete targetObject;
+    }
     void FollowTarget()
     {
         float posX = targetObject->x;
         float posY = targetObject->y;
-        float Width = targetObject->collisionX;
-        float Height = targetObject->collisionY;
         float lx = x + centerX - responseLX;
         float ly = y - centerY + responseLY;
         float rx = x + centerX + responseRX;
@@ -41,13 +40,13 @@ public:
         {
             y = posY + centerY - responseLY;
         }
-        if (posX + Width > rx)
+        if (posX > rx)
         {
-            x = posX + Width - centerX - responseLX;
+            x = posX - centerX - responseLX;
         }
-        if (posY - Height < ry)
+        if (posY < ry)
         {
-            y = posY - Height + centerY + responseLY;
+            y = posY + centerY + responseLY;
         }
 
         if (ctrlLX != 0 || ctrlLY != 0 || ctrlRX != 0 || ctrlRY != 0)
@@ -57,9 +56,9 @@ public:
                 x = ctrlLX;
                 speedX = 0;
             }
-            if (x + width + speedX > ctrlRX)
+            if (x + speedX > ctrlRX)
             {
-                x = ctrlRX - width;
+                x = ctrlRX;
                 speedX = 0;
             }
             if (y + speedY > ctrlLY)
@@ -67,9 +66,9 @@ public:
                 y = ctrlLY;
                 speedY = 0;
             }
-            if (y - height + speedY < ctrlRY)
+            if (y + speedY < ctrlRY)
             {
-                y = ctrlRY + height;
+                y = ctrlRY;
                 speedY = 0;
             }
         }
@@ -82,45 +81,47 @@ public:
         object.baseObject->setPos(object.winX, object.winY);
         object.baseObject->setAnchor(0.5f, 0.5f);
         object.baseObject->setRotation(object.angle);
-        for (float i = 0; i < object.childlist.size(); i++)
+        for (auto child : object.childlist)
         {
-            object.childlist[i]->x += object.childlist[i]->speedX;
-            object.childlist[i]->y += object.childlist[i]->speedY;
-            object.childlist[i]->winX = object.childlist[i]->x - x;
-            object.childlist[i]->winY = y - object.childlist[i]->y;
-            if (object.childlist[i]->baseObject != nullptr)
+            child->x += child->speedX;
+            child->y += child->speedY;
+            child->winX = child->x - x;
+            child->winY = y - child->y;
+            if (child->baseObject != nullptr)
             {
-                object.childlist[i]->baseObject->setPos(object.childlist[i]->winX, object.childlist[i]->winY);
-                object.childlist[i]->baseObject->setAnchor(0.5f, 0.5f);
-                object.childlist[i]->baseObject->setRotation(object.childlist[i]->angle);
+                child->baseObject->setPos(child->winX, child->winY);
+                child->baseObject->setAnchor(0.5f, 0.5f);
+                child->baseObject->setRotation(child->angle);
             }
         }
     }
     void ProjectCollision(BaseObject& object)
     {
-        ShapeMaker collisionMaker;
+        easy2d::ShapeMaker collisionMaker;
         collisionMaker.beginPath(object.collisionPoints[0]);
-        for (size_t i = 1; i < object.collisionPoints.size(); ++i)
+        for (size_t i = 1; i < object.collisionPoints.size(); i++)
             collisionMaker.addLine(object.collisionPoints[i]);
         collisionMaker.endPath(true);
         auto collisionShape = collisionMaker.getShape();
-        auto shapeNode = gcnew ShapeNode(collisionShape);
+        auto shapeNode = easy2d::gcnew easy2d::ShapeNode(collisionShape);
         shapeNode->setOrder(100); 
-        DrawingStyle style;
-        style.mode = DrawingStyle::Mode::Round;
-        style.strokeColor = Color::GreenYellow;         
+        easy2d::DrawingStyle style;
+        style.mode = easy2d::DrawingStyle::Mode::Round;
+        style.strokeColor = easy2d::Color::GreenYellow;
         style.strokeWidth = 2.0; 
         shapeNode->setDrawingStyle(style);
         object.baseObject->addChild(shapeNode);
     }
-    void Coordinates();
-
-    BaseObject* targetObject;  // 指向目标对象的指针
-    float x, y;       // 摄像头默认坐标
-    float width, height; // 摄像头大小
-    float speedX, speedY; // 摄像头移动速度
-    float maxSpeed;    // 摄像头默认速度
-    float centerX, centerY; // 摄像头默认跟随中心
-    float responseLX, responseLY, responseRX, responseRY; // 摄像头默认跟随阈值
-    float ctrlLX, ctrlLY, ctrlRX, ctrlRY; // 摄像头默认移动范围 (不限制)
+    // Function
+    void CtrlCameraMove(char up, char right, char down, char left); // 手动控制摄像机
+    // ...
+    // Base
+    BaseObject* targetObject;                               // 指向目标对象的指针
+    float x, y;                                             // 摄像头默认坐标
+    float width, height;                                    // 摄像头大小
+    float speedX, speedY;                                   // 摄像头移动速度
+    float maxSpeed;                                         // 摄像头默认速度
+    float centerX, centerY;                                 // 摄像头默认跟随中心
+    float responseLX, responseLY, responseRX, responseRY;   // 摄像头默认跟随阈值
+    float ctrlLX, ctrlLY, ctrlRX, ctrlRY;                   // 摄像头默认移动范围 (不限制)
 };
