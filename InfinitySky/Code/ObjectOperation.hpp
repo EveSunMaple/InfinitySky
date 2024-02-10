@@ -5,4 +5,4 @@
 #include "SceneControl.hpp"
 #include "Environment.hpp"
 
-BaseObject* NewShip(std::string name, float x, float y, float angle);
+BaseObject* NewShip(const std::string&, float x, float y, float angle);

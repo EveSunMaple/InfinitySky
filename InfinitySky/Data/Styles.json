@@ -1,0 +1,11 @@
+{
+  "style": {
+    "whiteSolid": {
+      "mode": "Solid",
+      "fillColor": "White",
+      "strokeColor": "White",
+      "strokeWidth": 0,
+      "lineJoin": "Miter"
+    }
+  }
+}

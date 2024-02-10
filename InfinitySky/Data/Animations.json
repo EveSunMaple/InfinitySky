@@ -1,0 +1,8 @@
+{
+  "animations": {
+    "contrailAni": [
+      { "name": "ScaleTo", "info": [0.8, 0.0], "next": 1 },
+      { "name": "OpacityTo", "info": [0.8, 0.0], "next": 0 }
+    ]
+  }
+}

@@ -118,11 +118,9 @@ void initDirectory(const std::string& directoryPath)
 void reLoad()
 {
     WARN "正在使用重加载模块！错误可能被隐蔽" END; ENDL
-        initDirectory("./Source");
+    initDirectory(SRC);
     newData["totalNumber"] = initLoadNumber;
-    std::ofstream outputFile("./Data/Data.json");
-    outputFile << newData;
-    outputFile.close();
+    writeJsonToFile(DATA, newData);
 }
 
 void traverseDirectory(const std::string& directoryPath)
@@ -225,7 +223,7 @@ public:
         // 初始化
         reLoad(); // 重加载!
         StyleInit();
-        readData = readJsonFromFile("./Data/Data.json");
+        readData = readJsonFromFile(DATA);
         loadThread = std::thread(GameInit);
         startUp = easy2d::gcnew easy2d::Sprite("./Source/PNG/Maps/icon.png");
         startUp->setAnchor(0.5f, 0.5f);

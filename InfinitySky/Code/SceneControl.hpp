@@ -21,8 +21,8 @@ inline easy2d::Sprite* copySprite(easy2d::Sprite* aimSprite)
 class BaseObject
 {
 public:
-    using FunctionList = std::deque<std::function<void(BaseObject*)>>;
-    using Function = std::function<void(BaseObject*)>;
+    using FunctionList = std::deque<std::function<void()>>;
+    using Function = std::function<void()>;
     using PointList = std::vector<easy2d::Point>;
     using ObjectList = std::deque<BaseObject*>;
     using String = std::string;
@@ -173,7 +173,7 @@ public:
         if (!controlFunctionList.empty())
         {
             for (Function controlFunction : controlFunctionList)
-                controlFunction(this);
+                controlFunction();
         }
     }
     // 对象应用函数
@@ -248,7 +248,7 @@ public:
     // Child
     bool followFather;                  // 设置是否相对
     ObjectList childlist;               // 定义儿子列表
-    BaseObject* childObject;            // 指向儿子的指针
+    BaseObject* childObject;            // 指向儿子的指针（待定）
     float lifeTime;                     // 定义儿子存在时间
     float tempTime;                     // 当前儿子操作阈值
     float lntervalTime;                 // 定义儿子间歇时间

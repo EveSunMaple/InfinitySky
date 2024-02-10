@@ -26,6 +26,11 @@
 
 #define ENDL std::cout << std::endl;
 
+// Json 
+#define SRC "./Source"
+#define DATA "./Data/Data.json"
+#define SHIPS "./Data/Ships.json"
+
 #define LOCK std::lock_guard<std::mutex> lock(initMutex);
 
 // 场景类
@@ -75,4 +80,11 @@ Json::Value readJsonFromFile(const std::string& filename)
     inputFile >> jsonData;
     inputFile.close();
     return jsonData;
+}
+
+void writeJsonToFile(const std::string& filename, Json::Value data)
+{
+    std::ofstream outputFile(filename);
+    outputFile << data;
+    outputFile.close();
 }
