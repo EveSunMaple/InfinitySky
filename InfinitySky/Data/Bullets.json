@@ -1,0 +1,31 @@
+{
+  "bullets": {
+    "laserBlue05":{
+      "sprite": {
+        "mass": 10,
+        "health": 100,
+        "lifeTime": 10,
+        "maxSpeed": 100,
+        "maxSpeedAngle": 5,
+        "rotateAcceleration": 2,
+        "forceAcceleration": 20,
+        "maxForce": 50,
+        "friction": 0,
+        "frictionAngle": 0
+      },
+      "collisionBox": [
+        [10, -13],
+        [36, 2],
+        [45, -3],
+        [43, 20],
+        [6, 27],
+        [-6, 27],
+        [-43, 20],
+        [-45, -3],
+        [-36, 2],
+        [-10, -1],
+        [-6, -37],
+        [6, -37]
+      ]
+    }}
+}

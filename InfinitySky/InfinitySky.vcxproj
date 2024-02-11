@@ -18,6 +18,32 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Code\CameraModule.cpp" />
+    <ClCompile Include="Code\jsoncpp.cpp" />
+    <ClCompile Include="Code\Main.cpp" />
+    <ClCompile Include="Code\ObjectOperation.cpp" />
+    <ClCompile Include="Code\SceneControl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\CameraModule.hpp" />
+    <ClInclude Include="Code\Environment.hpp" />
+    <ClInclude Include="Code\Function.hpp" />
+    <ClInclude Include="Code\json\json-forwards.h" />
+    <ClInclude Include="Code\json\json.h" />
+    <ClInclude Include="Code\ObjectOperation.hpp" />
+    <ClInclude Include="Code\SceneControl.hpp" />
+    <ClInclude Include="Code\SourceLoad.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Actions.json" />
+    <None Include="Data\Bullets.json" />
+    <None Include="Data\Data.json" />
+    <None Include="Data\Particles.json" />
+    <None Include="Data\Ships.json" />
+    <None Include="Data\Styles.json" />
+    <None Include="Data\Weapons.json" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -105,6 +131,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,22 +154,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="CameraModule.hpp" />
-    <ClInclude Include="Environment.hpp" />
-    <ClInclude Include="Function.hpp" />
-    <ClInclude Include="json\json-forwards.h" />
-    <ClInclude Include="json\json.h" />
-    <ClInclude Include="SceneControl.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="jsoncpp.cpp" />
-    <ClCompile Include="Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data.json" />
-    <None Include="Ships.json" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

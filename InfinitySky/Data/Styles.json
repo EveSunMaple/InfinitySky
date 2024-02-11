@@ -1,0 +1,28 @@
+{
+  "style": {
+    "whiteSolid": {
+      "name": "whiteSolid",
+      "mode": "Solid",
+      "fillColor": "0xFFFFFF",
+      "strokeColor": "0xFFFFFF",
+      "strokeWidth": 0,
+      "lineJoin": "Miter"
+    },
+    "hollowBarStyle": {
+      "name": "Round",
+      "mode": "Solid",
+      "fillColor": "0xFFFFFF",
+      "strokeColor": "0xFFFFFF",
+      "strokeWidth": 2,
+      "lineJoin": "Round"
+    },
+    "loadBarStyle": {
+      "name": "loadBarStyle",
+      "mode": "Solid",
+      "fillColor": "0xFFFFFF",
+      "strokeColor": "0x000000",
+      "strokeWidth": 0,
+      "lineJoin": "Miter"
+    }
+  }
+}

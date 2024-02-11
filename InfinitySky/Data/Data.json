@@ -1,6 +1,18 @@
 {
 	"resourcePath" : 
 	[
+		"./Source/Backgrounds/black.png",
+		"./Source/Backgrounds/blue.png",
+		"./Source/Backgrounds/darkPurple.png",
+		"./Source/Backgrounds/purple.png",
+		"./Source/Bonus/kenvector.ttf",
+		"./Source/Bonus/sfx_laser1.wav",
+		"./Source/Bonus/sfx_laser2.wav",
+		"./Source/Bonus/sfx_lose.wav",
+		"./Source/Bonus/sfx_shieldDown.wav",
+		"./Source/Bonus/sfx_shieldUp.wav",
+		"./Source/Bonus/sfx_twoTone.wav",
+		"./Source/Bonus/sfx_zap.wav",
 		"./Source/PNG/Damage/playerShip1_damage1.png",
 		"./Source/PNG/Damage/playerShip1_damage2.png",
 		"./Source/PNG/Damage/playerShip1_damage3.png",
@@ -303,5 +315,5 @@
 		"./Source/PNG/UI/playerLife3_orange.png",
 		"./Source/PNG/UI/playerLife3_red.png"
 	],
-	"totalNumber" : 301
+	"totalNumber" : 313
 }

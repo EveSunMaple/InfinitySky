@@ -1,0 +1,25 @@
+{
+  "particles": {
+    "contrail": {
+      "sprite": {
+        "ifFollow": true,
+        "lifeTime": 10,
+        "angle": 180,
+        "speed": 10
+      },
+      "shape": {
+        "circle": {
+          "ifOpen": true,
+          "style": "whiteSolid",
+          "size": 10
+        },
+        "polygon": {
+          "ifOpen": false,
+          "style": "NULL",
+          "polygonBox": []
+        }
+      },
+      "animation": [{ "name": "contrailAni", "next": 0 }]
+    }
+  }
+}

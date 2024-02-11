@@ -13,44 +13,83 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source">
+    <Filter Include="资源">
       <UniqueIdentifier>{93e149e1-65c5-484f-b8ea-42e3c0ed84e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Json">
+      <UniqueIdentifier>{56758ce8-97b9-4f53-9275-f1064cbbb959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\InGame">
+      <UniqueIdentifier>{fc47c6d0-80dc-4a7b-8d70-b799869aadb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\ExtraEasy2D">
+      <UniqueIdentifier>{e7452472-5a38-44ab-8657-2f77e808b556}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CameraModule.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneControl.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Environment.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Function.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json-forwards.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Code\jsoncpp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="jsoncpp.cpp">
+    <ClCompile Include="Code\Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\SceneControl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\ObjectOperation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\CameraModule.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ships.json">
-      <Filter>Source</Filter>
+    <ClInclude Include="Code\Environment.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\CameraModule.hpp">
+      <Filter>头文件\ExtraEasy2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\SceneControl.hpp">
+      <Filter>头文件\ExtraEasy2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Function.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\ObjectOperation.hpp">
+      <Filter>头文件\InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\json\json.h">
+      <Filter>头文件\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\json\json-forwards.h">
+      <Filter>头文件\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\SourceLoad.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Actions.json">
+      <Filter>资源</Filter>
     </None>
-    <None Include="Data.json">
-      <Filter>Source</Filter>
+    <None Include="Data\Data.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Ships.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Styles.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Weapons.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Particles.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Bullets.json">
+      <Filter>资源</Filter>
     </None>
   </ItemGroup>
 </Project>
