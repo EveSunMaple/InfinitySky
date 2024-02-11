@@ -70,7 +70,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Animations.json">
+    <None Include="Data\Actions.json">
       <Filter>资源</Filter>
     </None>
     <None Include="Data\Data.json">
@@ -83,6 +83,12 @@
       <Filter>资源</Filter>
     </None>
     <None Include="Data\Weapons.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Particles.json">
+      <Filter>资源</Filter>
+    </None>
+    <None Include="Data\Bullets.json">
       <Filter>资源</Filter>
     </None>
   </ItemGroup>

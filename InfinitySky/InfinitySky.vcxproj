@@ -36,8 +36,10 @@
     <ClInclude Include="Code\SourceLoad.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Animations.json" />
+    <None Include="Data\Actions.json" />
+    <None Include="Data\Bullets.json" />
     <None Include="Data\Data.json" />
+    <None Include="Data\Particles.json" />
     <None Include="Data\Ships.json" />
     <None Include="Data\Styles.json" />
     <None Include="Data\Weapons.json" />

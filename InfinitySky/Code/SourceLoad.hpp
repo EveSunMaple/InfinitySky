@@ -17,42 +17,101 @@ std::thread loadThread;// 全局线程
 
 void StyleInit()
 {
-    hollowBarStyle.mode = easy2d::DrawingStyle::Mode::Round;
-    hollowBarStyle.fillColor = easy2d::Color::White;
-    hollowBarStyle.strokeColor = easy2d::Color::White;
-    hollowBarStyle.strokeWidth = 2.0;
-    hollowBarStyle.lineJoin = easy2d::LineJoin::Round;
-
-    loadBarStyle.mode = easy2d::DrawingStyle::Mode::Solid;
-    loadBarStyle.fillColor = easy2d::Color::White;
-    loadBarStyle.strokeColor = easy2d::Color::Black;
-    loadBarStyle.strokeWidth = 0.0;
-    loadBarStyle.lineJoin = easy2d::LineJoin::Miter;
+    /*  Black = 0x000000,
+		Blue = 0x0000FF,
+		BlueViolet = 0x8A2BE2,
+		Brown = 0xA52A2A,
+		Chocolate = 0xD2691E,
+		DarkBlue = 0x00008B,
+		DarkGray = 0xA9A9A9,
+		DarkGreen = 0x006400,
+		DarkOrange = 0xFF8C00,
+		DarkRed = 0x8B0000,
+		DarkViolet = 0x9400D3,
+		ForestGreen = 0x228B22,
+		Gold = 0xFFD700,
+		Gray = 0x808080,
+		Green = 0x008000,
+		GreenYellow = 0xADFF2F,
+		LightBlue = 0xADD8E6,
+		LightCyan = 0xE0FFFF,
+		LightGreen = 0x90EE90,
+		LightGray = 0xD3D3D3,
+		LightPink = 0xFFB6C1,
+		LightSeaGreen = 0x20B2AA,
+		LightSkyBlue = 0x87CEFA,
+		LightYellow = 0xFFFFE0,
+		Orange = 0xFFA500,
+		OrangeRed = 0xFF4500,
+		Pink = 0xFFC0CB,
+		Purple = 0x800080,
+		Red = 0xFF0000,
+		Silver = 0xC0C0C0,
+		SkyBlue = 0x87CEEB,
+		Snow = 0xFFFAFA,
+		Violet = 0xEE82EE,
+		Wheat = 0xF5DEB3,
+		White = 0xFFFFFF,
+		WhiteSmoke = 0xF5F5F5,
+		Wood = 0xDEB887,
+		Yellow = 0xFFFF00,
+		YellowGreen = 0x9ACD32*/
+    modeMap["Solid"] = easy2d::DrawingStyle::Mode::Solid;
+    modeMap["Round"] = easy2d::DrawingStyle::Mode::Round;
+    modeMap["Fill"] = easy2d::DrawingStyle::Mode::Fill;
+    lineJoinMap["None"] = easy2d::LineJoin::None;
+    lineJoinMap["Miter"] = easy2d::LineJoin::Miter;
+    lineJoinMap["Bevel"] = easy2d::LineJoin::Bevel;
+    lineJoinMap["Round"] = easy2d::LineJoin::Round;
+    Json::Value Data = readJsonFromFile(STYLES);
+    const Json::Value styleList = Data["styles"];
+    for (const Json::Value style : styleList)
+    {
+        easy2d::DrawingStyle newStyle;
+        newStyle.mode = modeMap[style["mode"].asCString()];
+        newStyle.lineJoin = lineJoinMap[style["lineJoin"].asCString()];
+        newStyle.fillColor = easy2d::Color::Value(hexStringToInt(style["fillColor"].asCString()));
+        newStyle.strokeColor = easy2d::Color::Value(hexStringToInt(style["strokeColor"].asCString()));
+        newStyle.strokeWidth = style["strokeWidth"].asFloat();
+        styleMap[style["name"].asCString()] = newStyle;
+    }
 }
 
 void ActionInit()
 {
-    /*
-    auto scaleTo = gcnew ScaleTo(0.8f, 0.0f);
-    auto opacityTo = gcnew OpacityTo(0.8f, 0.0f);
-    auto two = gcnew Spawn({ scaleTo, opacityTo });
-    scaleTo = gcnew ScaleTo(0.0f, 0.1f);
-    action_particle1 = gcnew Sequence({ scaleTo, two });
-    action_particle1->retain();
-
-    scaleTo = gcnew ScaleTo(0.5f, 0.12f);
-    opacityTo = gcnew OpacityTo(0.4f, 0.0f);
-    two = gcnew Spawn({ scaleTo, opacityTo });
-    scaleTo = gcnew ScaleTo(0.0f, 0.5f);
-    action_particle2 = gcnew Sequence({ scaleTo, two });
-    action_particle2->retain();
-
-    scaleTo = gcnew ScaleTo(0.4f, 0.15f);
-    opacityTo = gcnew OpacityTo(0.4f, 0.0f);
-    two = gcnew Spawn({ scaleTo, opacityTo });
-    scaleTo = gcnew ScaleTo(0.0f, 0.4f);
-    action_particle3 = gcnew Sequence({ scaleTo, two });
-    action_particle3->retain();*/
+    Json::Value Data = readJsonFromFile(ACTIONS);
+    const Json::Value actionList = Data["actions"];
+    for (const Json::Value action : actionList)
+    {
+        easy2d::Sequence* totalAction = nullptr;
+        for (const Json::Value actionIn : action["info"])
+        {
+            int operation = actionIn["connect"].asInt();
+            Json::Value Info = actionIn["info"];
+            std::string name = actionIn["name"].asCString();
+            easy2d::Sequence* nowAction = nullptr;
+            if (name == "MoveTo") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::MoveTo(actionIn["info"][0].asFloat(), easy2d::Point(100, 200)));
+            else if (name == "MoveBy") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::MoveBy(Info[0].asFloat(), easy2d::Vector2(Info[1].asFloat(), Info[2].asFloat())));
+            else if (name == "ScaleTo")nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::ScaleTo(Info[0].asFloat(), Info[1].asFloat()));
+            else if (name == "ScaleBy") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::ScaleBy(Info[0].asFloat(), Info[1].asFloat()));
+            else if (name == "OpacityTo") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::OpacityTo(Info[0].asFloat(), Info[1].asFloat()));
+            else if (name == "OpacityBy") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::OpacityBy(Info[0].asFloat(), Info[1].asFloat()));
+            else if (name == "FadeIn") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::FadeIn(Info[0].asFloat()));
+            else if (name == "FadeOut") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::FadeOut(Info[0].asFloat()));
+            else if (name == "RotateTo") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::RotateTo(Info[0].asFloat(), Info[1].asFloat()));
+            else if (name == "RotateBy") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::RotateBy(Info[0].asFloat(), Info[1].asFloat()));
+            // else if (name == "JumpTo") nowAction = dynamic_cast<easy2d::Sequence*>(new easy2d::JumpTo(Info[0].asFloat(), Point(Info[1].asFloat(), Info[2].asFloat())));
+            // else if (name == "JumpBy") nowAction = dynamic_cast<easy2d::Sequence*>(new easy2d::JumpBy(Info[0].asFloat(), Point(Info[1].asFloat(), Info[2].asFloat())));
+            else if (name == "Delay") nowAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::Delay(Info[0].asFloat()));
+            else nowAction = nullptr;
+            // 衔接动画
+            if (totalAction == nullptr || operation == 0) totalAction = nowAction;
+            else if (operation == 1) totalAction = dynamic_cast<easy2d::Sequence*>(easy2d::gcnew easy2d::Spawn({ totalAction, nowAction }));
+            else if (operation == 2) totalAction = easy2d::gcnew easy2d::Sequence({ totalAction, nowAction });
+        }
+        totalAction->retain();
+        actionMap[action["name"].asCString()] = totalAction;
+    }
 }
 
 void MusicInit()
@@ -209,7 +268,13 @@ void GameInit()
     Sleep(1);
     checkOver(2);
 
-    // 初始化动作
+    // 初始化 Json
+    ShipData = readJsonFromFile(SHIPS);
+    BulletData = readJsonFromFile(BULLETS);
+    WeaponData = readJsonFromFile(WEAPONS);
+    ParticleData = readJsonFromFile(PARTICLES);
+    Sleep(1);
+    checkOver(3);
 }
 
 class LoadPage : public easy2d::Sprite
@@ -231,13 +296,13 @@ public:
         startUp->setPos(480, 320);
         this->addChild(startUp);
         locateBar = easy2d::gcnew easy2d::ShapeNode(easy2d::Shape::createRoundedRect(easy2d::Rect(easy2d::Point(), easy2d::Size(800, 40)), easy2d::Vector2(10, 10)));
-        locateBar->setDrawingStyle(hollowBarStyle);
+        locateBar->setDrawingStyle(styleMap["hollowBarStyle"]);
         locateBar->setAnchor(0.5f, 0.5f);
         locateBar->setPos(480, 420);
         locateBar->setOrder(0);
         this->addChild(locateBar);
         loadbar = easy2d::gcnew easy2d::ShapeNode(easy2d::Shape::createRoundedRect(easy2d::Rect(easy2d::Point(), easy2d::Size(800, 40)), easy2d::Vector2(10, 10)));
-        loadbar->setDrawingStyle(loadBarStyle);
+        loadbar->setDrawingStyle(styleMap["loadBarStyle"]);
         loadbar->setPos(0, 0);
         locateBar->addChild(loadbar);
         tip = easy2d::gcnew easy2d::Text("初始化中……");
@@ -271,6 +336,10 @@ public:
             }
         }
         if (check == 2)
+        {
+            tip->setText("正在读入 Json 文件");
+        }
+        if (check == 3)
         {
             easy2d::OpacityTo* opacityTo = easy2d::gcnew easy2d::OpacityTo(1.0f, 1.0f);
             easy2d::OpacityTo* _opacityTo = easy2d::gcnew easy2d::OpacityTo(0.5f, 0.0f);

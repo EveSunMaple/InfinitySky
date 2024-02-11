@@ -5,4 +5,7 @@
 #include "SceneControl.hpp"
 #include "Environment.hpp"
 
-BaseObject* NewShip(const std::string&, float x, float y, float angle);
+BaseObject* NewParticle(BaseObject* father, const std::string& name, float fx, float fy);
+BaseObject* NewBullet(BaseObject* father, const std::string& name);
+BaseObject* NewWeapon(const std::string& name, float fx, float fy, float angle);
+BaseObject* NewShip(const std::string& name, float x, float y, float angle);

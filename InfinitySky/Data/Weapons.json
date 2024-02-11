@@ -4,8 +4,8 @@
       "sprite": {
         "mass": 1000,
         "health": 100,
-        "damage": 10,
         "fireSpeed": 10,
+        "fireAngle": 3,
         "maxSpeedAngle": 5,
         "rotateAcceleration": 2,
         "frictionAngle": 1.5,

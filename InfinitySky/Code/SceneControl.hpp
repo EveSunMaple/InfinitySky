@@ -36,11 +36,10 @@ public:
         easy2d::Color color = easy2d::Color::White)
         : order(order), x(x), y(y), winX(0.0f), winY(0.0f), baseColor(color),
         baseObject(nullptr), baseSprite(baseSprite), targetSprite(targetSprite), action(action),
-        text(nullptr), childObject(nullptr), fatherObject(fatherObject), targetObject(nullptr),
+        text(nullptr), fatherObject(fatherObject), targetObject(nullptr),
         speed(0.0f), speedAngle(0.0f), speedX(0.0f), speedY(0.0f), angle(0.0f),
         health(100.0f), mass(100.0f), maxSpeed(10.0f), maxSpeedAngle(5.0),
-        friction(1.5f), frictionAngle(1.5f), elastic(0.0f), tempTime(0.0f),
-        lifeTime(10.0f), childSpeed(0.0f), childAngle(0.0f), childTrueAngle(0.0f), lntervalTime(0.1f), childX(0.0f), childY(0.0f),
+        friction(1.5f), frictionAngle(1.5f), elastic(0.0f), 
         fatherX(fatherX), fatherY(fatherY), followFather(followFather),
         openCollision(false), collisionRotation(0.0f)
     {
@@ -51,8 +50,7 @@ public:
     BaseObject(String data)
         : speed(0.0f), speedAngle(0.0f), speedX(0.0f), speedY(0.0f), angle(0.0f),
         health(100.0f), mass(100.0f), maxSpeed(10.0f), maxSpeedAngle(5.0),
-        friction(1.5f), frictionAngle(1.5f), elastic(0.0f), tempTime(0.0f),
-        lifeTime(10.0f), childSpeed(0.0f), childAngle(0.0f), childTrueAngle(0.0f), lntervalTime(0.1f), childX(0.0f), childY(0.0f)
+        friction(1.5f), frictionAngle(1.5f), elastic(0.0f)
     {
         // 待定...此内容需要更为个性化的设计
     }
@@ -82,19 +80,10 @@ public:
         text(other->text),
         followFather(other->followFather),
         childlist(other->childlist),
-        childObject(other->childObject),
-        lifeTime(other->lifeTime),
-        lntervalTime(other->lntervalTime),
-        childSpeed(other->childSpeed),
-        childAngle(other->childAngle),
-        childTrueAngle(other->childTrueAngle),
-        childX(other->childX),
-        childY(other->childY),
         fatherObject(other->fatherObject),
         fatherX(other->fatherX),
         fatherY(other->fatherY),
         targetObject(other->targetObject),
-        tempTime(other->tempTime),
         upKey(other->upKey),
         downKey(other->downKey),
         leftKey(other->leftKey),
@@ -130,22 +119,25 @@ public:
         easy2d::ShapeMaker collisionMaker;
         if (collisionPoints.empty())
         {
-            collisionPoints.push_back(easy2d::Point(100, 100));
-            collisionPoints.push_back(easy2d::Point(100, -100));
-            collisionPoints.push_back(easy2d::Point(-100, -100));
-            collisionPoints.push_back(easy2d::Point(-100, 100));
+            // collisionPoints.push_back(easy2d::Point(100, 100));
+            // collisionPoints.push_back(easy2d::Point(100, -100));
+            // collisionPoints.push_back(easy2d::Point(-100, -100));
+            // collisionPoints.push_back(easy2d::Point(-100, 100));
         }
-        collisionMaker.beginPath(collisionPoints[0]);
-        for (size_t i = 1; i < collisionPoints.size(); i++)
-            collisionMaker.addLine(collisionPoints[i]);
-        collisionMaker.endPath(true);
-        auto collisionShape = collisionMaker.getShape();
-        baseObject = easy2d::gcnew easy2d::ShapeNode(collisionShape);
-        baseObject->setOrder(100);
-        easy2d::DrawingStyle style;
-        style.mode = easy2d::DrawingStyle::Mode::Solid;
-        style.fillColor = easy2d::Color::White;
-        baseObject->setDrawingStyle(style);
+        else
+        {
+            collisionMaker.beginPath(collisionPoints[0]);
+            for (size_t i = 1; i < collisionPoints.size(); i++)
+                collisionMaker.addLine(collisionPoints[i]);
+            collisionMaker.endPath(true);
+            auto collisionShape = collisionMaker.getShape();
+            baseObject = easy2d::gcnew easy2d::ShapeNode(collisionShape);
+            baseObject->setOrder(100);
+            easy2d::DrawingStyle style;
+            style.mode = easy2d::DrawingStyle::Mode::Solid;
+            style.fillColor = easy2d::Color::White;
+            baseObject->setDrawingStyle(style);
+        }
         // 初始化
         if (baseSprite != nullptr)
         {
@@ -184,8 +176,8 @@ public:
         angle += speedAngle;
         if (fatherObject != nullptr)
         {
-            angle = fatherObject->angle;
-            float Angle = fatherObject->angle * (float)acos(-1) / 180;
+            trueAngle = fatherObject->trueAngle + angle;
+            float Angle = fatherObject->trueAngle * (float)acos(-1) / 180;
             float changeX = 0, changeY = 0;
             changeY += cos(Angle) * fatherY;
             changeX += sin(Angle) * fatherY;
@@ -223,7 +215,7 @@ public:
     String level;
     String layout;
     // Base
-    int order;
+    int order;  
     easy2d::Sprite* targetSprite;       // 目标精灵
     easy2d::Sequence* action;           // 定义动画
     easy2d::Sprite* baseSprite;         // 定义精灵
@@ -231,6 +223,7 @@ public:
     float x, y;                         // 默认坐标
     float mass;                         // 默认质量
     float angle;                        // 当前角度
+    float trueAngle;                    // 真正角度
     float speed;                        // 当前速度
     float speedAngle;                   // 当前角速度
     float winX, winY;                   // 默认窗口坐标
@@ -248,17 +241,19 @@ public:
     // Child
     bool followFather;                  // 设置是否相对
     ObjectList childlist;               // 定义儿子列表
-    BaseObject* childObject;            // 指向儿子的指针（待定）
-    float lifeTime;                     // 定义儿子存在时间
-    float tempTime;                     // 当前儿子操作阈值
-    float lntervalTime;                 // 定义儿子间歇时间
-    float childSpeed;                   // 儿子发射速度
-    float childAngle;                   // 儿子发射角度
-    float childTrueAngle;               // 儿子发射角度（真）
-    float childX, childY;               // 定义相对坐标
+    // 已拥有儿子列表，下列内容失去存在价值，已删除
+    // BaseObject* childObject;         // 指向儿子的指针（待定）
+    // float lifeTime;                  // 定义儿子存在时间
+    // float tempTime;                  // 当前儿子操作阈值
+    // float lntervalTime;              // 定义儿子间歇时间
+    // float childSpeed;                // 儿子发射速度
+    // float childAngle;                // 儿子发射角度
+    // float childTrueAngle;            // 儿子发射角度（真）
+    // float childX, childY;            // 定义相对坐标
     // Father
     BaseObject* fatherObject;           // 指向父亲的指针
     float fatherX, fatherY;             // 定义相对坐标
+    float fatherAngle;                  // 定义相对旋转
     // Target
     BaseObject* targetObject;           // 指向目标的指针
     // Collision

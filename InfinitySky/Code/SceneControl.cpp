@@ -6,14 +6,7 @@
 #include <tuple>
 #include "json/json.h"
 #include "SceneControl.hpp"
-
-// 取余
-float Remainder(float val, int in)
-{
-    if (val < 0) return Remainder(val + in, in);
-    if (val > in) return Remainder(val - in, in);
-    return val;
-}
+#include "Environment.hpp"
 
 void BaseObject::SolePhysics()
 {

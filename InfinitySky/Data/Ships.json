@@ -2,7 +2,6 @@
   "ships": {
     "playerShip1_blue": {
       "sprite": {
-        "name": "playerShip1_blue",
         "mass": 100000,
         "health": 100,
         "maxSpeed": 10,
